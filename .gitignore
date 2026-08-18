@@ -1,0 +1,33 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# credenziali in chiaro - mai committare
+credenziali.txt
+
+# Produttivita' personale (non committare)
+TASKS.md
+CLAUDE.md
+dashboard.html
+memory/
+test_88_result.txt
+
+# Dati personali del soggetto (biografia vera): restano sulla macchina, mai su GitHub
+data/
+
+# Appunti di deploy con infrastruttura personale: restano sulla macchina
+DEPLOY_88.md
+
+# Output di lavoro degli script operativi (log, dump, audio/immagini di test): mai nel repo
+host/*.out
+host/*.out.txt
+host/sshdbg.txt
+*.wav
+*.png
+*.jpg
+*.jpeg

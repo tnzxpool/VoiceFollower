@@ -1,0 +1,10 @@
+import paramiko
+c = paramiko.SSHClient()
+c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+c.connect("192.168.1.88", username="root", key_filename="H:/keys/tnzx_pve88_key")
+_, out, err = c.exec_command("pct exec 130 -- bash /opt/voicefollower/install/doctor.sh", timeout=180)
+o = out.read().decode(errors="replace")
+rc = out.channel.recv_exit_status()
+print(o, flush=True)
+print("EXIT:", rc, flush=True)
+c.close()

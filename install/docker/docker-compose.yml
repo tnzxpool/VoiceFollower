@@ -1,0 +1,90 @@
+# ============================================================================
+# VoiceFollower — installazione via Docker (macchina con solo Docker, no Proxmox)
+#
+#   Base (solo app, nessun modello, nessuna GPU richiesta):
+#       docker compose up -d --build
+#   Con voce + visione su GPU NVIDIA (serve nvidia-container-toolkit):
+#       docker compose --profile gpu up -d --build
+#   Anche il cervello locale (prima: metti il GGUF in ./vfdata/models
+#   e sistema il nome file qui sotto in 'brain'):
+#       docker compose --profile gpu --profile brain up -d --build
+#
+# I dati/modelli vivono in ./vfdata (equivalente di /vf del CT Proxmox).
+# ============================================================================
+name: voicefollower
+
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: install/docker/app.Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      # in Docker i servizi si raggiungono per nome, non su localhost:
+      VF_TTS_URL: http://tts:9107
+      VF_VISION_URL: http://vision:9106
+      LOCAL_LLM_ENDPOINT: http://brain:9101/v1
+      LOCAL_LLM_MODEL: vf-brain
+    volumes:
+      - ./vfdata:/vf
+      - appdata:/opt/voicefollower/data
+    restart: unless-stopped
+
+  tts:
+    profiles: [gpu]
+    build:
+      context: ../..
+      dockerfile: install/docker/tts.Dockerfile
+    environment:
+      COQUI_TOS_AGREED: "1"
+      TTS_HOME: /vf/tts/models
+    volumes:
+      - ./vfdata:/vf
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  vision:
+    profiles: [gpu]
+    build:
+      context: ../..
+      dockerfile: install/docker/vision.Dockerfile
+    volumes:
+      - ./vfdata:/vf
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  brain:
+    profiles: [brain]
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    command: >
+      -m /vf/models/Qwen3.8-27B-IQ4_XS.gguf
+      --alias vf-brain --jinja -ngl 99 --ctx-size 8192 --parallel 2
+      --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0
+      --reasoning-budget 0 --cache-reuse 256 --host 0.0.0.0 --port 9101
+    volumes:
+      - ./vfdata:/vf
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+volumes:
+  appdata:

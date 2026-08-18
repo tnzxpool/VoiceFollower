@@ -1,0 +1,6 @@
+{
+  "name": "VoiceFollower AI Companion & Caregiver Master Hub",
+  "description": "Sistema vocale, visivo ed empatico companion per persone affette da Alzheimer e caregiver. Connessione LAN con dispositivi slave (smartphone, tablet), grafo di memoria biografica ed etimologica, server GPU locale (Proxmox + NVIDIA) e sintesi neurale rassicurante.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

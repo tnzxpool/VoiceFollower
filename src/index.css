@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Restyle "denso e funzionale" (richiesta nizix 2026-08-17):
+   stile gestionale — bordi netti, niente arrotondamenti spinti,
+   niente ombre/effetti, contrasto alto, densità di informazione.
+   Primo passo globale: neutralizza l'estetica "a bolle" ovunque
+   senza toccare componente per componente.
+   ============================================================ */
+
+/* Angoli netti al posto delle bolle */
+.rounded-3xl, .rounded-2xl, .rounded-xl, .rounded-lg {
+  border-radius: 3px !important;
+}
+.rounded-md, .rounded {
+  border-radius: 2px !important;
+}
+
+/* Via ombre e trasparenze decorative */
+.shadow-xs, .shadow-sm, .shadow, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl {
+  box-shadow: none !important;
+}
+
+/* Bordi visibili: i grigini quasi invisibili diventano bordi veri */
+.border-slate-100 { border-color: #cbd5e1 !important; }
+.border-slate-200 { border-color: #94a3b8 !important; }
+.border-slate-200\/60 { border-color: #94a3b8 !important; }
+
+/* Testi secondari più leggibili (contrasto su sfondo chiaro) */
+.text-slate-400 { color: #64748b !important; }
+.text-slate-500 { color: #475569 !important; }
+
+/* Font di sistema classico, resa uniforme */
+body {
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+}

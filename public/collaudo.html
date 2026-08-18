@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VoiceFollower — Collaudo</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 860px; margin: 0 auto; padding: 24px; color: #1e293b; background: #f8fafc; }
+  h1 { font-size: 1.6rem; } h2 { font-size: 1.15rem; margin-top: 2rem; border-bottom: 2px solid #6366f1; padding-bottom: 4px; }
+  .step { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin: 12px 0; }
+  .step label { display: flex; gap: 10px; align-items: baseline; cursor: pointer; font-size: 1.05rem; }
+  .step input[type=checkbox] { transform: scale(1.5); }
+  .atteso { color: #047857; margin: 6px 0 0 34px; }
+  .atteso::before { content: "Atteso: "; font-weight: 600; }
+  a { color: #4f46e5; word-break: break-all; }
+  code { background: #eef2ff; padding: 1px 5px; border-radius: 4px; }
+  .rimedio { background: #fff7ed; border-color: #fdba74; }
+  @media print { .step { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<h1>Collaudo VoiceFollower — vf-host (192.168.1.89)</h1>
+<p>Spunta ogni passo. Se un passo fallisce, salta ai <a href="#rimedi">rimedi</a> in fondo.</p>
+
+<h2>1 · Salute del sistema</h2>
+<div class="step"><label><input type="checkbox"> Apri <a href="http://192.168.1.89:3000/api/health">http://192.168.1.89:3000/api/health</a></label>
+  <p class="atteso">testo che inizia con <code>{"status":"ok"</code></p></div>
+<div class="step"><label><input type="checkbox"> Apri <a href="http://192.168.1.89:9101/health">http://192.168.1.89:9101/health</a> (cervello locale)</label>
+  <p class="atteso"><code>{"status":"ok"}</code></p></div>
+
+<h2>2 · Postazione kiosk (.4)</h2>
+<div class="step"><label><input type="checkbox"> Sul PC .4: doppio click su <code>Desktop\KIOSK_4.bat</code> (oppure riavvia il PC)</label>
+  <p class="atteso">Chrome a tutto schermo con la vista sorveglianza, indirizzo <code>192.168.1.89:3000</code>. Per uscire: ALT+F4.</p></div>
+
+<h2>3 · Procedura guidata (verifica motori)</h2>
+<div class="step"><label><input type="checkbox"> Apri <a href="http://192.168.1.89:3000/?vista=caregiver">http://192.168.1.89:3000/?vista=caregiver</a> → scheda <b>«Motori Multi-LLM &amp; API Keys»</b> → pulsante <b>«Procedura guidata»</b></label>
+  <p class="atteso">i 4 passi (server, motore LLM, provider, prova reale) diventano verdi. Il passo «provider» può segnare giallo/rosso se non hai messo chiavi cloud: va bene, il cervello locale basta.</p></div>
+
+<h2>4 · Prova con la voce (vista paziente)</h2>
+<div class="step"><label><input type="checkbox"> Apri <a href="http://192.168.1.89:3000/?vista=companion&kiosk=1">http://192.168.1.89:3000/?vista=companion&amp;kiosk=1</a> e concedi il microfono</label>
+  <p class="atteso">la vista compagno a schermo intero, data e ora visibili.</p></div>
+<div class="step"><label><input type="checkbox"> Dì ad alta voce: <b>«Non trovo i miei occhiali»</b></label>
+  <p class="atteso">risposta calma e breve in italiano, parlata e scritta.</p></div>
+<div class="step"><label><input type="checkbox"> Dì: <b>«Che giorno è oggi?»</b></label>
+  <p class="atteso">risposta con la data corretta.</p></div>
+
+<h2 id="rimedi">Rimedi se qualcosa fallisce</h2>
+<div class="step rimedio"><b>Le pagine .89 non si aprono</b> → il contenitore vf-host è spento. Apri
+  <a href="https://192.168.1.88:8006">https://192.168.1.88:8006</a> (Proxmox) → CT <b>130 (vf-host)</b> → <b>Avvia</b>. Attendi 2 minuti e riprova il punto 1.</div>
+<div class="step rimedio"><b>Il kiosk mostra 192.168.1.3 invece di .89</b> → il .89 era spento all'avvio del kiosk: va bene lo stesso (è la riserva). Per ripuntarlo: doppio click su <code>Desktop\KIOSK_4.bat</code> con .89 acceso.</div>
+<div class="step rimedio"><b>Il cervello risponde ma lentissimo o in inglese</b> → segnalalo a Claude: si regola il modello (porta 9101) senza toccare l'app.</div>
+<div class="step rimedio"><b>Qualsiasi altro problema</b> → scrivi a Claude cosa hai visto sullo schermo al passo fallito.</div>
+</body>
+</html>

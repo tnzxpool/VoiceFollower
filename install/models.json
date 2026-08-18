@@ -1,0 +1,51 @@
+{
+  "_commento": "Lista modelli VoiceFollower — SSOT per download-models.sh. L'admin può aggiornarla (nuovi modelli/URL) e rilanciare il wizard. url vuoto = il modello si scarica da solo al primo avvio del servizio, oppure va copiato a mano (vedi note). Campo 'tipo_file': estensione attesa del file scaricato (gguf/pt/wav) — verificata da wizard e pannello admin (estensione + magic bytes).",
+  "voce_tts": {
+    "funzione": "Voce clonata (kiosk e companion), zero-shot da un campione wav",
+    "modello": "XTTS-v2 (coqui-tts)",
+    "dimensione": "~1.9 GB",
+    "porta": 9107,
+    "auto_download": true,
+    "note": "Si scarica da solo al primo avvio di vf-tts (TTS_HOME=/vf/tts/models). Campioni voce in /vf/tts/voices/*.wav. Richiede GPU per tempi reali (~3s/frase su P40); su CPU funziona ma lento.",
+    "tipo_file": "wav (campioni voce; il modello XTTS si scarica da solo)"
+  },
+  "visione": {
+    "funzione": "Riconoscimento oggetti di casa (open-vocabulary) per 'dove ho messo gli occhiali'",
+    "modello": "yolov8l-worldv2.pt (YOLO-World, ultralytics)",
+    "dimensione": "~90 MB + CLIP ~340 MB",
+    "porta": 9106,
+    "auto_download": true,
+    "note": "ultralytics scarica i pesi da solo al primo avvio; il text-encoder CLIP viene scaricato alla prima set_classes (avvio lento la prima volta: normale).",
+    "tipo_file": "pt"
+  },
+  "cervello_locale": {
+    "funzione": "LLM locale offline (fallback quando non si usa un provider cloud)",
+    "modello": "Qwen3.8-27B-IQ4_XS.gguf",
+    "dimensione": "~15 GB",
+    "porta": 9101,
+    "auto_download": false,
+    "url": "",
+    "note": "Nessun auto-download: compilare 'url' con il link diretto al GGUF (HuggingFace → file .gguf → Copy download link) oppure copiarlo da una macchina esistente in /vf/models/. Qualsiasi GGUF chat va bene: aggiornare 'modello' col nome file.",
+    "tipo_file": "gguf"
+  },
+  "prep_cpu": {
+    "funzione": "Pre-processore leggero su CPU (intenti, battute rapide) — OPZIONALE",
+    "modello": "qwen2.5-0.5b-instruct GGUF",
+    "dimensione": "~0.5 GB",
+    "porta": 9102,
+    "auto_download": false,
+    "url": "",
+    "note": "Opzionale: l'app funziona senza. Stessa procedura del cervello (url o copia in /vf/models/).",
+    "tipo_file": "gguf"
+  },
+  "embedding": {
+    "funzione": "Embeddings per memoria/grafo — OPZIONALE",
+    "modello": "Qwen3-Embedding-0.6B GGUF",
+    "dimensione": "~0.6 GB",
+    "porta": 9105,
+    "auto_download": false,
+    "url": "",
+    "note": "Opzionale. Stessa procedura del cervello.",
+    "tipo_file": "gguf"
+  }
+}

@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  # 1. Core Master Orchestrator (Express + React Client + Multi-LLM Bridge)
+  edgemesh-master:
+    build:
+      context: ..
+      dockerfile: private_host/Dockerfile
+    container_name: edgemesh-master-core
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "50051:50051" # Duplex TDMA Gateway
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - GLM_API_KEY=${GLM_API_KEY}
+      - OLLAMA_HOST=http://ollama-local:11434
+      - DATABASE_URL=postgres://nizix_admin:${DB_PASSWORD:-nizix_secure_pass}@postgres-db:5432/edgemesh_knowledge
+      - REDIS_URL=redis://redis-mesh:6379
+    depends_on:
+      - postgres-db
+      - redis-mesh
+    networks:
+      - edgemesh-internal
+
+  # 2. Relational Knowledge Database (Dialects, Invented Words, Speaker Profiles)
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: edgemesh-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: nizix_admin
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-nizix_secure_pass}
+      POSTGRES_DB: edgemesh_knowledge
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - edgemesh-internal
+
+  # 3. Redis In-Memory State & Duplex Audio/Video Buffer
+  redis-mesh:
+    image: redis:7-alpine
+    container_name: edgemesh-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - edgemesh-internal
+
+  # 4. Chroma Vector Database for RAG & Semantic Graph Embeddings
+  chroma-rag:
+    image: chromadb/chroma:latest
+    container_name: edgemesh-chroma
+    restart: unless-stopped
+    volumes:
+      - chroma_data:/chroma/chroma
+    ports:
+      - "8000:8000"
+    networks:
+      - edgemesh-internal
+
+  # 5. Local Ollama LLM / vLLM Engine (Air-Gap Zero Egress)
+  ollama-local:
+    image: ollama/ollama:latest
+    container_name: edgemesh-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama_models:/root/.ollama
+    ports:
+      - "11434:11434"
+    networks:
+      - edgemesh-internal
+
+  # 6. Hugging Face Neural TTS Service (Kokoro-82M / Piper VITS GPU Acceleration)
+  kokoro-tts-neural:
+    image: python:3.11-slim
+    container_name: edgemesh-neural-tts
+    restart: unless-stopped
+    environment:
+      - TTS_MODEL=hexgrad/Kokoro-82M-v0.19-it
+      - PIPER_MODEL=it_IT-riccardo-medium
+      - CUDA_VISIBLE_DEVICES=0
+    volumes:
+      - ./models:/models
+    ports:
+      - "8000:8000"
+    command: >
+      bash -c "pip install --no-cache-dir fastapi uvicorn kokoro-onnx soundfile scipy torch &&
+               uvicorn app:main --host 0.0.0.0 --port 8000"
+    networks:
+      - edgemesh-internal
+
+volumes:
+  postgres_data:
+  redis_data:
+  chroma_data:
+  ollama_models:
+
+networks:
+  edgemesh-internal:
+    driver: bridge

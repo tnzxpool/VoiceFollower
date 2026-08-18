@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "_nota": "Catalogo modelli di vf-host — schema mutuato da r740-ai-factory-community (provenance esplicita, un modello = una unit systemd).",
+  "models": [
+    {
+      "id": "vf-brain",
+      "display_name": "Qwen3.6 35B-A3B IQ4_XS — cervello residente",
+      "kind": "chat",
+      "backend": "llama.cpp",
+      "enabled": true,
+      "artifact": "/opt/voicefollower/models/qwen3.6-35b-a3b-iq4xs.gguf",
+      "port": 9101,
+      "device": "cuda:P40",
+      "minimum_vram_gib": 20,
+      "notes": "Copiato dal disco della VM factory. MoE ~3B attivi: veloce anche su Pascal. Sempre residente (mlock), mai unload."
+    },
+    {
+      "id": "vf-prep",
+      "display_name": "Qwen3 1.7B Q4 — pre-processore",
+      "kind": "chat",
+      "backend": "llama.cpp",
+      "enabled": true,
+      "artifact": "/opt/voicefollower/models/qwen3-1.7b-q4.gguf",
+      "port": 9102,
+      "device": "cpu",
+      "minimum_ram_gib": 3,
+      "notes": "Intento, urgenza, normalizzazione dialetti, battuta rapida. 4 slot paralleli."
+    },
+    {
+      "id": "vf-stt",
+      "display_name": "Whisper large-v3-turbo q5_0",
+      "kind": "stt",
+      "backend": "whisper.cpp",
+      "enabled": true,
+      "artifact": "/opt/voicefollower/models/ggml-large-v3-turbo-q5_0.bin",
+      "port": 9103,
+      "device": "cuda:P40",
+      "minimum_vram_gib": 2,
+      "notes": "Italiano eccellente, sostituisce Web Speech API come via primaria."
+    },
+    {
+      "id": "vf-tts",
+      "display_name": "Kokoro (it) / Piper fallback",
+      "kind": "tts",
+      "backend": "python",
+      "enabled": true,
+      "artifact": "/opt/voicefollower/tts_server.py",
+      "port": 9104,
+      "device": "cpu",
+      "notes": "Voci italiane if_sara / im_nicola. Futuro: XTTS-v2 per voce familiare clonata (decisione di famiglia)."
+    },
+    {
+      "id": "vf-embed",
+      "display_name": "BGE-M3 Q8 — embeddings",
+      "kind": "embedding",
+      "backend": "llama.cpp",
+      "enabled": true,
+      "artifact": "/opt/voicefollower/models/bge-m3-q8.gguf",
+      "port": 9105,
+      "device": "cpu",
+      "notes": "Retrieval su grafo semantico e memorie biografiche (SQLite)."
+    }
+  ]
+}
