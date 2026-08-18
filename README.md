@@ -1,14 +1,19 @@
 # VoiceFollower
 
-> Compagno vocale locale per persone con Alzheimer: kiosk semplice per l'ospite, pannello completo per il caregiver. Tutto gira in casa, su GPU locale — nessun dato personale esce dalla rete.
-
-## Autore
-
+> Compagno vocale locale per persone con Alzheimer: kiosk semplice per l'ospite, pannello completo per il caregiver. Tutto gira in casa, su GPU locale (Ai open weight) — nessun dato personale esce dalla rete.
+nota: Funziona anche con abbonamenti claude/gpt ma la privacy non e' rispettata.
+ 
 - **nizix** — [github.com/tnzxpool](https://github.com/tnzxpool)
 
 ## Cos'è
 
 VoiceFollower è un sistema di assistenza vocale pensato per accompagnare una persona con decadimento cognitivo:
+
+Il progetto e' personale, non ha la pretesa di risolvere nulla, e non sostituisce l affetto che puo dare una persona cara. Il mio tentativo e' tale e mirava a ricreare sistemi gia esistenti commerciali.
+Il risultato  non e'  un prodotto finito , ma funziona, ascolta e ragiona  , risponde, con ritardo dovuto al bus della mia macchina lentissima, forse con dei Mac  potrebbe migliorare.
+
+Il "cervello", impara frequentando il soggetto, ambisce ad essere autoapprendente e con un pretraining del Careginver,  con possibilita di clonare una voce cara.
+E' un esperimento che devo interrompere per mancanza di tempo e mezzi adeguati, ma che  puo essere ripreso completamente con questo installer che prevede un Sistema proxmox.
 
 - **Vista Ospite (kiosk)**: interfaccia grande e calma. La persona parla, il sistema risponde a voce con tono rassicurante, ricordando dove si trova e chi le è vicino.
 - **Vista Caregiver (admin)**: gestione completa — profilo e biografia della persona, grafo di conoscenza (famiglia, luoghi, abitudini), download e attivazione dei modelli AI, diagnostica dei servizi.
